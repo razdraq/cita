@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quieres salir conmigo?</title>
+    <style>
+        :root {
+            --bg-color: #f7eef0;
+            --card-bg: #ffffff;
+            --text-color: #3b2e2e;
+            --primary-pink: #e8a2a8;
+            --primary-pink-hover: #d78f95;
+            --secondary-btn: #d4a5ab;
+            --border-radius: 20px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Fondo con florecitas flotantes */
+        .flower-bg {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.4;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        /* Contenedor de la tarjeta */
+        .card {
+            background-color: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            box-sizing: border-box;
+            z-index: 10;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Secciones ocultas/visibles */
+        .step {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilos generales de elementos */
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 0.95rem;
+            color: #5c4b4b;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .img-container {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Botones */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .btn {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(232, 162, 168, 0.4);
+            transition: background-color 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-pink-hover);
+        }
+
+        .btn-secondary {
+            background-color: #c9b3b7;
+            box-shadow: 0 4px 10px rgba(201, 179, 183, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: #b89fa3;
+        }
+
+        /* Botón que huye (No) */
+        #btn-no {
+            position: relative;
+            transition: 0.1s ease-out;
+        }
+
+        /* Campos de formulario personalizados */
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #5c4b4b;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 0.95krem;
+            box-sizing: border-box;
+            background-color: #faf7f7;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-pink);
+        }
+
+        /* Cuadrícula de comida */
+        .food-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .food-option {
+            background-color: #faf7f7;
+            border: 1px solid #eee;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .food-option:hover, .food-option.selected {
+            background-color: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
+        }
+
+        .price-tag {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #3b2e2e;
+            margin: 20px 0;
+        }
+
+        .footnote {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Flores decorativas flotantes de fondo -->
+    <div class="flower-bg" style="top: 10%; left: 15%;">🌸</div>
+    <div class="flower-bg" style="top: 80%; left: 20%;">🌸</div>
+    <div class="flower-bg" style="top: 25%; left: 85%;">🌸</div>
+    <div class="flower-bg" style="top: 70%; left: 80%;">🌸</div>
+
+    <div class="card">
+
+        <!-- PASO 1: ¿Quieres salir conmigo? -->
+        <div id="step-1" class="step active">
+            <div class="img-container">
+                <!-- Imagen de ejemplo de perrito/avatar -->
+                <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=300&q=80" alt="Avatar">
+            </div>
+            <h2>🌸 ¿Quieres salir conmigo?</h2>
+            <div class="btn-group">
+                <button class="btn" onclick="nextStep(2)">Sí 🤍</button>
+                <button class="btn btn-secondary" id="btn-no" onmouseover="moveButton()" onclick="moveButton()">No 🤍</button>
+            </div>
+        </div>
+
+        <!-- PASO 2: Trampa si le das que sí (o broma alternativa) -->
+        <div id="step-2" class="step">
+            <div class="img-container" style="background: #fde8e9;">
+                <span style="font-size: 3rem;">🫓</span>
+            </div>
+            <h2>¿De verdad acabas de decir que sí? 🥹</h2>
+            <p>Ya me estaba preparando para que dijeras que no 🥲</p>
+            <button class="btn" onclick="nextStep(3)">¡Bueno, bueno! →</button>
+        </div>
+
+        <!-- PASO 3: Fecha y hora -->
+        <div id="step-3" class="step">
+            <h2>Entonces... ¿cuándo tienes tiempo libre?</h2>
+            <div class="form-group">
+                <label>Elige un día 📅</label>
+                <input type="date" id="date-input">
+            </div>
+            <div class="form-group">
+                <label>¿A qué hora? 🐰</label>
+                <select id="time-input">
+                    <option value="">Selecciona una hora...</option>
+                    <option value="12:00 p. m.">12:00 p. m.</option>
+                    <option value="2:00 p. m.">2:00 p. m.</option>
+                    <option value="4:00 p. m.">4:00 p. m.</option>
+                    <option value="6:00 p. m.">6:00 p. m.</option>
+                    <option value="8:00 p. m.">8:00 p. m.</option>
+                    <option value="9:00 p. m.">9:00 p. m.</option>
+                </select>
+            </div>
+            <button class="btn" onclick="nextStep(4)">¡Confirmemos la cita! 🤍</button>
+        </div>
+
+        <!-- PASO 4: Elección de comida -->
+        <div id="step-4" class="step">
+            <h2>¿Qué se te antoja? 🍽️✨</h2>
+            <p style="font-size: 0.85rem; margin-top: -10px;">Elige lo que te apetece</p>
+            <div class="food-grid">
+                <div class="food-option" onclick="selectFood(this)">Pizza</div>
+                <div class="food-option" onclick="selectFood(this)">Sushi</div>
+                <div class="food-option selected" onclick="selectFood(this)">Hamburguesas</div>
+                <div class="food-option" onclick="selectFood(this)">Pasta</div>
+                <div class="food-option" onclick="selectFood(this)">Tacos</div>
+                <div class="food-option" onclick="selectFood(this)">Ramen</div>
+            </div>
+            <button class="btn" onclick="nextStep(5)">Siguiente →</button>
+        </div>
+
+        <!-- PASO 5: Mensaje final gracioso -->
+        <div id="step-5" class="step">
+            <h2 style="font-size: 1.25rem;">Me alegra que no hayas dicho que no. Alístate para las 6; paso por ti 🚗</h2>
+            <p style="font-size: 0.85rem; text-align: left; background: #faf3f4; padding: 12px; border-radius: 10px;">
+                <strong>P. D.</strong> La gente normal manda mensajes. Yo te hice un sitio web en Replit a la hora del almuerzo. No es para tanto. 💻
+            </p>
+            <button class="btn" onclick="nextStep(6)">Está bien, acepto 🍔</button>
+        </div>
+
+        <!-- PASO 6: El pequeño pago gracioso -->
+        <div id="step-6" class="step">
+            <p style="font-size: 0.8rem; letter-spacing: 1px; color: #777; margin-bottom: 5px;">ACUERDO DE CITA™</p>
+            <h2 style="font-size: 1.2rem; margin-bottom: 10px;">Un pequeño pago</h2>
+            <p style="font-size: 0.85rem;">Para confirmar que aceptas esta cita, completa la siguiente transacción. Totalmente normal. Todo el mundo lo hace.</p>
+            
+            <div class="price-tag">$99.999</div>
+            <p style="font-size: 0.75rem; color: #888; margin-top: -10px;">Pago único • no reembolsable • vale totalmente la pena</p>
+            
+            <button class="btn" onclick="alert('¡Transacción aprobada con éxito (imaginariamente)! Nos vemos en la cita 🤍')">Pagar $499 y confirmar 💌</button>
+            <br><br>
+            <a href="#" onclick="nextStep(1); return false;" style="font-size: 0.85rem; color: #999; text-decoration: none;">Volver</a>
+        </div>
+
+        <div class="footnote">🤍 Hecho con amor</div>
+    </div>
+
+    <script>
+        // Función para cambiar de pantalla paso a paso
+        function nextStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${stepNumber}`).classList.add('active');
+        }
+
+        // Efecto para que el botón "No" huya al pasar el cursor o hacer clic
+        function moveButton() {
+            const btnNo = document.getElementById('btn-no');
+            const randomX = (Math.random() - 0.5) * 160;
+            const randomY = (Math.random() - 0.5) * 100;
+            btnNo.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        // Selección visual de comida
+        function selectFood(element) {
+            document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+    </script>
+</body>
+</html>
